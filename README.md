@@ -5,6 +5,7 @@
 |Name | Address |
 |-----|---------|
 |AAFactory.sol|[0x0ee2ec442E758f55218911f654CfB57f4616aeFA](https://goerli.explorer.zksync.io/address/0x0ee2ec442E758f55218911f654CfB57f4616aeFA#contract)|
+|PermissionPaymaster.sol|[0x0678F69E97E5fAB19a9188DFC8349b622c46A28D](https://goerli.explorer.zksync.io/address/0x0678F69E97E5fAB19a9188DFC8349b622c46A28D#contract)|
 
 # zkSync Hardhat project
 
