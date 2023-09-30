@@ -12,7 +12,7 @@ import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 /// @author Matter Labs
 /// @notice This contract does not include any validations other than using the paymaster general flow.
-contract GeneralPaymaster is IPaymaster, Ownable {
+contract PermissionPaymaster is IPaymaster, Ownable {
     using ECDSA for bytes32;
 
     address immutable platformAddr;
