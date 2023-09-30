@@ -1,3 +1,11 @@
+# Onyx-zkSync-contracts
+
+## Deployed Contract Address
+
+|Name | Address |
+|-----|---------|
+|AAFactory.sol|[0x0ee2ec442E758f55218911f654CfB57f4616aeFA](https://goerli.explorer.zksync.io/address/0x0ee2ec442E758f55218911f654CfB57f4616aeFA#contract)|
+
 # zkSync Hardhat project
 
 This project was scaffolded with [zksync-cli](https://github.com/matter-labs/zksync-cli).
@@ -41,4 +49,3 @@ If you do not start the zkSync local environment, the tests will fail with error
 - [GitHub](https://github.com/matter-labs)
 - [Twitter](https://twitter.com/zksync)
 - [Discord](https://discord.gg/nMaPGrDDwk)
-# Onyx-zkSync-contracts
