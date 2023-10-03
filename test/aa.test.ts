@@ -3,7 +3,7 @@ import { Wallet, Provider, Contract, utils} from 'zksync-web3';
 import * as hre from 'hardhat';
 import { Deployer } from '@matterlabs/hardhat-zksync-deploy';
 import { ethers, BytesLike } from 'ethers';
-import { getGeneralPaymasterInput } from 'zksync-web3/build/src/paymaster-utils';
+import { getPaymasterParams } from 'zksync-web3/build/src/paymaster-utils';
 import { GeneralPaymasterInput } from 'zksync-web3/build/src/types';
 import dotenv from "dotenv";
 dotenv.config();
@@ -13,25 +13,8 @@ const RICH_WALLET_PK =
 const PLATFORM_PRIVATE_KEY = process.env.PLATFORM_PRIVATE_KEY || "";
 if (!PLATFORM_PRIVATE_KEY) throw "⛔️ Private key not detected! Add it to the .env file!";
 
-async function deployGreeter(deployer: Deployer): Promise<Contract> {
-  const artifact = await deployer.loadArtifact('Greeter');
-  return await deployer.deploy(artifact, ['Hi']);
-}
-
-type Address = string;
-
-interface PaymasterInput {
-  paymasterInput: BytesLike;
-}
-
-type PaymasterParams = {
-  paymaster: Address;
-  paymasterInput: BytesLike;
-};
-
 
 describe('deploy', function () {
-  let aaFactoryaddress: string;
   let paymasteraddress: string;
   let factory: Contract;
   it ('Should be deployed without an error | AAFactory', async function () {
@@ -59,43 +42,46 @@ describe('deploy', function () {
     const deployer = new Deployer(hre, wallet);
     const paymasterArtifact = await deployer.loadArtifact("PermissionPaymaster");
     const paymaster = await deployer.deploy(paymasterArtifact, ['0xeED5c5CDf2e9Ade31E95FE6a3EfCa74b75300deA']);
+    
     // Create a transaction object
     let tx = {
+        from: wallet.address,
         to: paymaster.address,
-        // Convert currency unit from ether to wei
         value: ethers.utils.parseEther("1.0")
     }
     // Send a transaction
-    wallet.sendTransaction(tx)
-    .then((txObj) => {
-      console.log('txHash', txObj.hash)
-      // => 0x9c172314a693b94853b49dc057cf1cb8e529f29ce0272f451eea8f5741aa9b58
-      // A transaction result can be checked in a etherscan with a transaction hash which can be obtained here.
-    })
+    const res = await wallet.sendTransaction(tx);
+    await res.wait();
     // Show the contract info.
     paymasteraddress = paymaster.address;
     console.log(`${paymaster.contractName} was deployed to ${paymasteraddress}`);
-
+    console.log("paymaster balance", await provider.getBalance(paymasteraddress));
   
   })
   it("Should be deployed without an error | Account", async function () {
     const provider = Provider.getDefaultProvider();
     const wallet = new Wallet(RICH_WALLET_PK, provider);
-    const deployer = new Deployer(hre, wallet);
 
     const platformWallet = new Wallet(PLATFORM_PRIVATE_KEY, provider);
     const owner = await wallet.getAddress();
-    const message = ethers.utils.arrayify(ethers.utils.id(owner));
-    const sig = await platformWallet.signMessage(message);
+    const message = owner;
+
+    const hash = ethers.utils.solidityKeccak256(['address'], [message]);
+    const messageHash = ethers.utils.arrayify(hash);
+    const sig = await platformWallet.signMessage(messageHash);
+
     const input: GeneralPaymasterInput = {
       type: 'General',
-      innerInput: ethers.utils.hexConcat([sig, message]),
+      innerInput: ethers.utils.hexConcat([sig, messageHash]),
     }
 
-    const paymasterParams = getGeneralPaymasterInput(input);
-    const factoryArtifact = await deployer.loadArtifact("AAFactory");
-    const aaArtifact = await deployer.loadArtifact("Account");
+    const paymasterParams = getPaymasterParams(
+      paymasteraddress,
+      input,
+    );
+
     const salt = ethers.utils.formatBytes32String("example@google.com");
+    console.log("salt", salt);
     
     await (
         await factory.deployAccount(salt, owner, {
@@ -107,14 +93,7 @@ describe('deploy', function () {
             }
         )
     ).wait();
-    const abiCoder = new ethers.utils.AbiCoder();
-    const accountAddress = utils.create2Address(
-        aaFactoryaddress,
-        await factory.aaBytecodeHash(),
-        salt,
-        abiCoder.encode(["address"], [owner])
-    );
-    console.log(`Account deployed on address ${accountAddress}`);
+    console.log(`Account deployed`);
     
   });
 });

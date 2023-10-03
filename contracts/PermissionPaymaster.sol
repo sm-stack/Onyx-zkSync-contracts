@@ -15,7 +15,7 @@ import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 contract PermissionPaymaster is IPaymaster, Ownable {
     using ECDSA for bytes32;
 
-    address immutable platformAddr;
+    address immutable public platformAddr;
 
     constructor (address _platformAddr) {
         platformAddr = _platformAddr;
@@ -50,14 +50,25 @@ contract PermissionPaymaster is IPaymaster, Ownable {
         bytes4 paymasterInputSelector = bytes4(
             _transaction.paymasterInput[0:4]
         );
-
-        bytes memory platformSig = _transaction.paymasterInput[4:36];
-        bytes32 messageHash = ECDSA.toEthSignedMessageHash(_transaction.paymasterInput[36:]);
+        
+        bytes memory platformSig = _transaction.paymasterInput[68:133];
+        bytes32 messageHash = keccak256(
+            abi.encodePacked(
+                "\x19Ethereum Signed Message:\n32", 
+                bytesToBytes32(_transaction.paymasterInput[133:165])
+            )
+        );
 
         // Check that the message was signed by the platform.
         require(
             platformAddr == messageHash.recover(platformSig),
             "Invalid platform signature"
+        );
+
+        // Check if the message has a valid value
+        require(
+            bytesToBytes32(_transaction.paymasterInput[133:165]) == keccak256(abi.encodePacked(address(uint160(_transaction.from)))),
+            "Invalid message"
         );
 
         if (paymasterInputSelector == IPaymasterFlow.general.selector) {
@@ -92,6 +103,15 @@ contract PermissionPaymaster is IPaymaster, Ownable {
         uint256 balance = address(this).balance;
         (bool success, ) = _to.call{value: balance}("");
         require(success, "Failed to withdraw funds from paymaster.");
+    }
+
+    function bytesToBytes32(bytes memory source) public pure returns (bytes32 result) {
+        if (source.length == 0) {
+            return 0x0;
+        }
+        assembly {
+            result := mload(add(source, 32))
+        }
     }
 
     receive() external payable {}
