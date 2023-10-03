@@ -5,7 +5,7 @@
 |Name | Address |
 |-----|---------|
 |AAFactory.sol|[0x0ee2ec442E758f55218911f654CfB57f4616aeFA](https://goerli.explorer.zksync.io/address/0x0ee2ec442E758f55218911f654CfB57f4616aeFA#contract)|
-|PermissionPaymaster.sol|[0x0678F69E97E5fAB19a9188DFC8349b622c46A28D](https://goerli.explorer.zksync.io/address/0x0678F69E97E5fAB19a9188DFC8349b622c46A28D#contract)|
+|PermissionPaymaster.sol|[0xf0d55f874c85522F20CB873C888fD22B33188b57](https://goerli.explorer.zksync.io/address/0xf0d55f874c85522F20CB873C888fD22B33188b57#contract)|
 |SeamlessNFT.sol|[0x65b7dC3bbAf38342d1ee2e1c3b89fD446Dd1f8AE](https://goerli.explorer.zksync.io/address/0x65b7dC3bbAf38342d1ee2e1c3b89fD446Dd1f8AE#contract)|
 
 # zkSync Hardhat project
