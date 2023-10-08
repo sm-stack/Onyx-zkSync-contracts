@@ -64,13 +64,7 @@ contract PermissionPaymaster is IPaymaster, Ownable {
             platformAddr == messageHash.recover(platformSig),
             "Invalid platform signature"
         );
-
-        // Check if the message has a valid value
-        require(
-            bytesToBytes32(_transaction.paymasterInput[133:165]) == keccak256(abi.encodePacked(address(uint160(_transaction.from)))),
-            "Invalid message"
-        );
-
+       
         if (paymasterInputSelector == IPaymasterFlow.general.selector) {
             // Note, that while the minimal amount of ETH needed is tx.gasPrice * tx.gasLimit,
             // neither paymaster nor account are allowed to access this context variable.
