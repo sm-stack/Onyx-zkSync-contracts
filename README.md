@@ -14,10 +14,10 @@ This is a collection of contracts used in Seamless, project for [Digital Identit
 ## Project Explanation
 
 [PermissionPaymaster.sol](./contracts/PermissionPaymaster.sol) is a contract that restricts access to prevent external entities to use it. It leverages paymasterInput at `Transaction` structure, which contains platform signature and messageHash. The verification process is done through below process:
-    1. Platform wallet sign for the `from` address of transaction. 
-    2. Platform compose a paymaster input, which includes signature and corresponding messageHash.   
-    3. `PermissionPaymaster` gets `Transaction` struct and decodes `paymasterInput` to extract platform sig and messageHash. 
-    4. Paymaster verifies platform signature, and checks the validity of signature and message.
+1. Platform wallet sign for the `from` address of transaction. 
+2. Platform compose a paymaster input, which includes signature and corresponding messageHash.   
+3. `PermissionPaymaster` gets `Transaction` struct and decodes `paymasterInput` to extract platform sig and messageHash. 
+4. Paymaster verifies platform signature, and checks the validity of signature and message.
 
 Also there are contracts for account deployment and account itself, example NFT used in the platform, and a DID registry to register user DID for verification.
 
