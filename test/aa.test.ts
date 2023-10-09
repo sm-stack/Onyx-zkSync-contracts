@@ -26,7 +26,7 @@ describe('deploy', function () {
     const factoryArtifact = await deployer.loadArtifact("AAFactory");
     const aaArtifact = await deployer.loadArtifact("Account");
     factory = await deployer.deploy(factoryArtifact, [utils.hashBytecode(aaArtifact.bytecode)], undefined, [aaArtifact.bytecode]);
-  
+
     // Show the contract info.
     const aaFactoryaddress = factory.address;
     console.log(`${factoryArtifact.contractName} was deployed to ${aaFactoryaddress}`);
